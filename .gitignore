@@ -1,2 +1,70 @@
-.env
-*.log
+### Terraform ###
+# Ignore local .terraform directories across all subfolders
+**/.terraform/
+
+# Ignore state files (stores secrets and state)
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Ignore execution plans
+*.tfplan
+*tfplan*
+
+# Ignore variable override files (often contain local secrets)
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore crash log files
+crash.log
+crash.*.log
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
+### Secrets & Environment Variables ###
+.env*
+!.env.example
+
+### SSH & Key Files ###
+**/.ssh/
+id_*
+*.pem
+*.key
+!*.pub
+
+### Ansible ###
+*.retry
+inventory.ini
+
+### Python ###
+.venv/
+venv/
+__pycache__/
+
+### Linux ###
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+### Windows ###
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnkcd 
