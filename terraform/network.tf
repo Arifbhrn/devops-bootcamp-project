@@ -11,7 +11,7 @@ module "devops-vpc" {
   private_subnets      = ["10.0.0.128/25"]
   private_subnet_names = ["devops-private-subnet"]
 
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   enable_nat_gateway      = true
   single_nat_gateway      = true
   igw_tags                = { name = "devops-igw" }
