@@ -14,7 +14,7 @@ module "devops-public-sg" {
       to_port     = 80
     }
     monitor = {
-      cidr_ipv4   = module.devops-vpc.vpc_cidr_block
+      cidr_ipv4   = "10.0.0.136/32"
       ip_protocol = "tcp"
       from_port   = 9100
       to_port     = 9100
