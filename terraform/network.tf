@@ -14,9 +14,9 @@ module "devops-vpc" {
   map_public_ip_on_launch = false
   enable_nat_gateway      = true
   single_nat_gateway      = true
-  igw_tags                = { name = "devops-igw" }
-  nat_gateway_tags        = { name = "devops-ngw" }
+  igw_tags                = { Name = "devops-igw" }
+  nat_gateway_tags        = { Name = "devops-ngw" }
 
-  public_route_table_tags  = { name = "devops-public-route" }
-  private_route_table_tags = { name = "devops-private-route" }
+  public_route_table_tags  = { Name = "devops-public-route" }
+  private_route_table_tags = { Name = "devops-private-route" }
 }
