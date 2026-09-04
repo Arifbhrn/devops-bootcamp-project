@@ -35,7 +35,8 @@ module "web-server" {
   vpc_security_group_ids = [module.devops-public-sg.id]
   iam_instance_profile   = data.aws_iam_instance_profile.my_ssm_profile.name
   key_name               = "aoki-keypair"
-  
+
+  user_data = templatefile("userdata-web.sh", {})
   tags = { Name = "web-server" }
 }
 
@@ -53,6 +54,7 @@ module "ansible-controller" {
   iam_instance_profile   = data.aws_iam_instance_profile.my_ssm_profile.name
   key_name               = "aoki-keypair"
 
+  user_data = templatefile("userdata-controller.sh", {})
   tags = { Name = "ansible-controller" }
 }
 
@@ -70,5 +72,6 @@ module "monitor-server" {
   iam_instance_profile   = data.aws_iam_instance_profile.my_ssm_profile.name
   key_name               = "aoki-keypair"
 
+  user_data = templatefile("userdata-monitoring.sh", {})
   tags = { Name = "monitor-server" }
 }
