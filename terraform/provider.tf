@@ -6,9 +6,9 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "devops-bootcamp-terraform-nik-muhammad-arif-adlan"
-    key    = "terraform/terraform.tfstate"
-    region = "ap-southeast-1"
+    bucket       = "devops-bootcamp-terraform-nik-muhammad-arif-adlan"
+    key          = "terraform/terraform.tfstate"
+    region       = "ap-southeast-1"
     use_lockfile = true
   }
 }
