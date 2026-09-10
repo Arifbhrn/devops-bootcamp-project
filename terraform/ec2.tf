@@ -19,7 +19,7 @@ resource "aws_eip" "eip-web-server" {
 resource "aws_eip_association" "eip_assoc" {
   instance_id   = module.web-server.id
   allocation_id = aws_eip.eip-web-server.id
-  depends_on = [ module.web-server ]
+  depends_on    = [module.web-server]
 }
 
 module "web-server" {
@@ -36,7 +36,6 @@ module "web-server" {
   iam_instance_profile   = data.aws_iam_instance_profile.my_ssm_profile.name
   key_name               = "aoki-keypair"
 
-  user_data = templatefile("userdata-web.sh", {})
   tags = { Name = "web-server" }
 }
 
@@ -54,7 +53,12 @@ module "ansible-controller" {
   iam_instance_profile   = data.aws_iam_instance_profile.my_ssm_profile.name
   key_name               = "aoki-keypair"
 
-  user_data = templatefile("userdata-controller.sh", {})
+  user_data = templatefile("controller-setup.sh", {
+    ssh_private_key   = file("~/.ssh/id_ed25519")
+    github_deploy_key = file("~/.ssh/github_deploy_key")
+    web_server_ip     = module.web-server.private_ip
+    monitoring_ip     = module.monitor-server.private_ip
+  })
   tags = { Name = "ansible-controller" }
 }
 
@@ -72,6 +76,5 @@ module "monitor-server" {
   iam_instance_profile   = data.aws_iam_instance_profile.my_ssm_profile.name
   key_name               = "aoki-keypair"
 
-  user_data = templatefile("userdata-monitoring.sh", {})
   tags = { Name = "monitor-server" }
 }
