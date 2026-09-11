@@ -1,14 +1,38 @@
-- name: Prepare web server
-  hosts: web
-  become: yes
+---
+- name: Install Docker on all nodes
+  hosts: nodes
+  become: true
+
   tasks:
-    - name: Install nginx
+    - name: Download Docker install script
+      get_url:
+        url: https://get.docker.com
+        dest: /tmp/get-docker.sh
+        mode: '0755'
+
+    - name: Run Docker install script
+      command: sh /tmp/get-docker.sh
+      args:
+        creates: /usr/bin/docker
+
+    - name: Add ubuntu user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: true
+
+    - name: Ensure Docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Install Python Docker SDK
       apt:
-        name: nginx
+        name: python3-docker
         state: present
-        update_cache: yes
-    - name: Start nginx service
+  handlers:
+    - name: Restart nginx
       service:
         name: nginx
-        state: started
-        enabled: yes
+        state: restarted
