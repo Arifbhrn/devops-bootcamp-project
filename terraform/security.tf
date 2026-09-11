@@ -49,6 +49,18 @@ module "devops-private-sg" {
       from_port   = 22
       to_port     = 22
     }
+    prometheus = {
+      cidr_ipv4   = module.devops-vpc.vpc_cidr_block
+      ip_protocol = "tcp"
+      from_port   = 9090
+      to_port     = 9090
+    }
+    grafana = {
+      cidr_ipv4   = module.devops-vpc.vpc_cidr_block
+      ip_protocol = "tcp"
+      from_port   = 3000
+      to_port     = 3000
+    }
   }
 
   egress_rules = {
