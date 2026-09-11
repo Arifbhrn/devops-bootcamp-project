@@ -1,0 +1,20 @@
+---
+services:
+  grafana:
+    image: grafana/grafana:nightly-ubuntu
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+
+  prometheus:
+    image: ubuntu/prometheus:3.11-26.04_stable
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+
+volumes:
+  grafana-data:

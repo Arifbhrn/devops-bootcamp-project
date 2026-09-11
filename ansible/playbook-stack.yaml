@@ -1,0 +1,28 @@
+---
+- name: Deploy monitoring stack
+  hosts: monitor
+  become: true
+  vars:
+    docker_users: [ubuntu]
+  roles:
+    - geerlingguy.docker
+  tasks:
+    - name: Create folder stack
+      file:
+        path: /opt/monitoring
+        state: directory
+
+    - name: Deploy prometheus.yaml
+      copy:
+        src: prometheus.yaml
+        dest: /opt/monitoring/prometheus.yaml
+
+    - name: Deploy compose.yaml
+      copy:
+        src: compose.yaml
+        dest: /opt/monitoring/compose.yaml
+
+    - name: Launch container
+      command: docker compose up -d
+      args:
+        chdir: /opt/monitoring
