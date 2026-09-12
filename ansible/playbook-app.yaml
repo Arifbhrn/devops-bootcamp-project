@@ -16,9 +16,11 @@
     host_port: "80"
 
   tasks:
-    - name: Install git
+    - name: Install git and unzip
       apt:
-        name: git
+        name:
+          - git
+          - unzip
         state: present
         update_cache: true
 
