@@ -1,0 +1,88 @@
+---
+- name: Build, push to ECR and deploy web app
+  hosts: web
+  become: true
+  vars:
+    app_repo_url: "https://github.com/Infratify/ship.git"
+    app_repo_branch: "main"
+    build_dir: "/opt/web-app"
+    dockerfile_src: "../app/dockerfile"
+    app_region: "ap-southeast-1"
+    ecr_registry: "046797548232.dkr.ecr.ap-southeast-1.amazonaws.com"
+    ecr_repository: "devops-bootcamp-project/nik"
+    image_name: "devops-bootcamp-project/nik"
+    image_tag: "latest"
+    container_name: "web-app"
+    host_port: "80"
+
+  tasks:
+    - name: Install git and AWS CLI
+      apt:
+        name:
+          - git
+          - awscli
+        state: present
+        update_cache: true
+
+    - name: Clone application repository
+      git:
+        repo: "{{ app_repo_url }}"
+        dest: "{{ build_dir }}"
+        version: "{{ app_repo_branch }}"
+        force: true
+      register: repo_clone
+
+    - name: Copy dockerfile into build context
+      copy:
+        src: "{{ dockerfile_src }}"
+        dest: "{{ build_dir }}/Dockerfile"
+      register: dockerfile_copy
+
+    - name: Get ECR login password
+      command: "aws ecr get-login-password --region {{ app_region }}"
+      register: ecr_password
+      changed_when: false
+      when: repo_clone.changed or dockerfile_copy.changed
+
+    - name: Login to ECR
+      community.docker.docker_login:
+        registry_url: "{{ ecr_registry }}"
+        username: AWS
+        password: "{{ ecr_password.stdout }}"
+      when: repo_clone.changed or dockerfile_copy.changed
+
+    - name: Build image
+      command:
+        chdir: "{{ build_dir }}"
+        cmd: "docker build -t {{ image_name }}:{{ image_tag }} ."
+      when: repo_clone.changed or dockerfile_copy.changed
+      register: image_build
+
+    - name: Tag image for ECR
+      command: "docker tag {{ image_name }}:{{ image_tag }} {{ ecr_registry }}/{{ ecr_repository }}:{{ image_tag }}"
+      when: image_build.changed
+
+    - name: Push image to ECR
+      command: "docker push {{ ecr_registry }}/{{ ecr_repository }}:{{ image_tag }}"
+      when: image_build.changed
+
+    - name: Check running container's current image
+      command: "docker inspect --format='{{ '{{' }}.Image{{ '}}' }}' {{ container_name }}"
+      register: current_container_image
+      changed_when: false
+      failed_when: false
+
+    - name: Get freshly built image ID
+      command: "docker images -q {{ image_name }}:{{ image_tag }}"
+      register: new_image_id
+      changed_when: false
+
+    - name: Run container 
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        image: "{{ ecr_registry }}/{{ ecr_repository }}:{{ image_tag }}"
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "{{ host_port }}:80"
+      when: current_container_image.rc != 0 or current_container_image.stdout.strip() != new_image_id.stdout.strip()
