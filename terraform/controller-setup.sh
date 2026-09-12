@@ -1,10 +1,8 @@
 #!/bin/bash
 set -e
 exec > >(tee /var/log/controller-setup.log) 2>&1
-echo "[$(date)] Starting controller-setup.sh"
 
 # Wait for apt/dpkg locks 
-echo "Waiting for apt/dpkg locks to clear..."
 while fuser /var/lib/dpkg/lock-frontend /var/lib/apt/lists/lock /var/lib/dpkg/lock >/dev/null 2>&1; do
   sleep 5
 done
@@ -80,5 +78,3 @@ ansible_user=ubuntu
 ansible_ssh_private_key_file=/home/ssm-user/.ssh/id_ed25519
 EOF
 chown ssm-user:ssm-user $REPO_DIR/inventory.ini
-
-echo "[$(date)] controller-setup.sh completed successfully"
