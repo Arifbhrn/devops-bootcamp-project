@@ -16,13 +16,27 @@
     host_port: "80"
 
   tasks:
-    - name: Install git and AWS CLI
+    - name: Install git
       apt:
-        name:
-          - git
-          - awscli
+        name: git
         state: present
         update_cache: true
+
+    - name: Install AWS CLI v2
+      block:
+        - name: Download AWS CLI installer
+          get_url:
+            url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+            dest: /tmp/awscliv2.zip
+        - name: Unzip AWS CLI installer
+          unarchive:
+            src: /tmp/awscliv2.zip
+            dest: /tmp
+            remote_src: true
+        - name: Run AWS CLI installer
+          command: /tmp/aws/install
+          args:
+            creates: /usr/local/bin/aws
 
     - name: Clone application repository
       git:
