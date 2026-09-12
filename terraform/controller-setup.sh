@@ -14,8 +14,9 @@ apt-get install -y software-properties-common
 add-apt-repository --yes --update ppa:ansible/ansible
 apt-get install -y ansible
 
-# install geerlingguy.docker & it waits until ansible-galaxy install properly
-until sudo -u ssm-user ansible-galaxy role install geerlingguy.docker; do
+# install geerlingguy.docker & prometheus.prometheus collection, retrying until both succeed
+until sudo -u ssm-user ansible-galaxy role install geerlingguy.docker \
+  && sudo -u ssm-user ansible-galaxy collection install prometheus.prometheus; do
   echo "ansible-galaxy install failed, retrying in 10 seconds"
   sleep 10
 done
