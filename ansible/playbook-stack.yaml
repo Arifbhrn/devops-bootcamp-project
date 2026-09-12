@@ -16,13 +16,13 @@
       copy:
         src: prometheus.yaml
         dest: /opt/monitoring/prometheus.yaml
-        register: prometheus_config
+      register: prometheus_config
 
     - name: Deploy compose.yaml
       copy:
         src: compose.yaml
         dest: /opt/monitoring/compose.yaml
-        register: compose_config
+      register: compose_config
 
     - name: Launch container
       command: docker compose up -d
