@@ -15,7 +15,7 @@ add-apt-repository --yes --update ppa:ansible/ansible
 apt-get install -y ansible
 
 # install geerlingguy.docker & it waits until ansible-galaxy install properly
-until ansible-galaxy role install geerlingguy.docker; do
+until sudo -u ssm-user ansible-galaxy role install geerlingguy.docker; do
   echo "ansible-galaxy install failed, retrying in 10 seconds"
   sleep 10
 done
