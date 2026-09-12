@@ -7,12 +7,18 @@ while fuser /var/lib/dpkg/lock-frontend /var/lib/apt/lists/lock /var/lib/dpkg/lo
   sleep 5
 done
 
-DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND=noninteractive
 # install ansible
 apt-get update -y
 apt-get install -y software-properties-common
 add-apt-repository --yes --update ppa:ansible/ansible
 apt-get install -y ansible
+
+# install geerlingguy.docker & it waits until ansible-galaxy install properly
+until ansible-galaxy role install geerlingguy.docker; do
+  echo "ansible-galaxy install failed, retrying in 10 seconds"
+  sleep 10
+done
 
 # checking for existing ssm user & add sudo privelege for apt only
 id ssm-user &>/dev/null || useradd -m -s /bin/bash ssm-user
