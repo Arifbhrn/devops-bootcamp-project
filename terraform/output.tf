@@ -1,3 +1,6 @@
+output "web-server-ip-public" {
+  value = aws_eip.eip-web-server.public_ip
+}
 output "web-server-ip-private" {
   value = module.web-server.private_ip
 }
