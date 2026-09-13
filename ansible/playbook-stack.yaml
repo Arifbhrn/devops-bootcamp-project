@@ -4,6 +4,7 @@
   become: true
   vars:
     docker_users: [ubuntu]
+    tunnel_parameter: "/devops-bootcamp-project/tunnel-token"
   roles:
     - geerlingguy.docker
   tasks:
@@ -11,6 +12,42 @@
       file:
         path: /opt/monitoring
         state: directory
+
+    - name: Install unzip
+      apt:
+        name: unzip
+        state: present
+        update_cache: true
+
+    - name: Install AWS CLI v2
+      block:
+        - name: Download AWS CLI installer
+          get_url:
+            url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+            dest: /tmp/awscliv2.zip
+        - name: Unzip AWS CLI installer
+          unarchive:
+            src: /tmp/awscliv2.zip
+            dest: /tmp
+            remote_src: true
+        - name: Run AWS CLI installer
+          command: /tmp/aws/install
+          args:
+            creates: /usr/local/bin/aws
+
+    - name: Fetch Cloudflare tunnel token from SSM
+      command: >-
+        aws ssm get-parameter --name {{ tunnel_parameter }}
+        --with-decryption --query Parameter.Value --output text
+      changed_when: false
+      register: tunnel_token
+
+    - name: Write .env file for compose
+      copy:
+        content: "TUNNEL_TOKEN={{ tunnel_token.stdout }}"
+        dest: /opt/monitoring/.env
+        mode: '0600'
+      register: env_file
 
     - name: Deploy prometheus.yaml
       copy:
@@ -28,5 +65,5 @@
       command: docker compose up -d
       args:
         chdir: /opt/monitoring
-      when: prometheus_config.changed or compose_config.changed
+      when: prometheus_config.changed or compose_config.changed or env_file.changed
       register: compose_up
