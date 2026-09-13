@@ -1,3 +1,4 @@
+---
 name: deploy
 on:
   push:
@@ -5,13 +6,13 @@ on:
   workflow_dispatch:
 jobs:
   deploy:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v7
-        - uses: actions/upload-pages-artifact@v5
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/upload-pages-artifact@v5
         with:
-            path: .
-        - uses: actions/deploy-pages@v5
+          path: .
+      - uses: actions/deploy-pages@v5
 
 permissions:
   pages: write
