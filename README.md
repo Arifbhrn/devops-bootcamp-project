@@ -9,9 +9,9 @@ inbound port ever opened.
 
 | | |
 |---|---|
-| Application | https://web.infratify.com |
-| Monitoring (Grafana) | https://monitoring.arifbhrn.com |
-| Status page | https://arifbhrn.github.io/devops-bootcamp-project/ |
+| Application | [https://web.infratify.com](https://web.arifbhrn.com/) |
+| Monitoring (Grafana) | [https://monitoring.arifbhrn.com](https://monitoring.arifbhrn.com/d/ad2vbvb/armada-node-overview?from=now-15m&to=now&timezone=browser&refresh=30s) |
+| Status page | [https://arifbhrn.github.io/devops-bootcamp-project/](https://github.com/Arifbhrn/devops-bootcamp-project) |
 
 ## Stack
 
@@ -29,14 +29,14 @@ Cloudflare Tunnel · AWS SSM Parameter Store
 ```
 ## Running this yourself
 
-1. Store the Cloudflare tunnel token once, before the first apply.
+1. Store the Cloudflare tunnel token once, before the first apply. The parameter name below isn't fixed, it just has to        match `tunnel_parameter` in `ansible/playbook-stack.yaml` wherever you actually run this from.
    ```
       aws ssm put-parameter \
      --name /devops-bootcamp-project/tunnel-token \
      --type SecureString \
      --value "<your tunnel token>"
    ```
-2. Terraform apply — provisions the VPC, subnets, security groups, IAM role, and all three EC2 instances. The controller's     user_data (controller-setup.sh) installs Ansible and the geerlingguy.docker Galaxy role, clones this repo, and generates   inventory.ini from the instances real private IPs at boot.
+2. Terraform apply — provisions the VPC, subnets, security groups, IAM role, and all three EC2 instances. The controller's     `user_data` `(controller-setup.sh)` installs Ansible and the geerlingguy.docker Galaxy role, clones this repo, and          generates inventory.ini from the instances real private IPs at boot.
    
 3. SSH into the controller as ssm-user and run the playbooks in order:
    ```
@@ -51,7 +51,7 @@ Cloudflare Tunnel · AWS SSM Parameter Store
    ```
 4. From here on: edit, push, re-run the playbook. Nothing changes unless the
    underlying files actually changed, so running it again with no edits is
-   safe and does nothing changed=0.
+   safe and does nothing `changed=0`.
 
 ### Secrets
 
