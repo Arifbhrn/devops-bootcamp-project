@@ -16,5 +16,11 @@ services:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
     restart: unless-stopped
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    env_file: .env
+    command: tunnel run
+    restart: unless-stopped
+
 volumes:
   grafana-data:
