@@ -2,3 +2,4 @@
 - import_playbook: playbook-docker.yaml
 - import_playbook: playbook-exporter.yaml
 - import_playbook: playbook-stack.yaml
+- import_playbook: playbook-app.yaml
