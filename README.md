@@ -12,6 +12,7 @@ inbound port ever opened.
 | Application | [https://web.infratify.com](https://web.arifbhrn.com/) |
 | Monitoring (Grafana) | [https://monitoring.arifbhrn.com](https://monitoring.arifbhrn.com/d/ad2vbvb/armada-node-overview?from=now-15m&to=now&timezone=browser&refresh=30s) |
 | Source page | [https://arifbhrn.github.io/devops-bootcamp-project/](https://github.com/Arifbhrn/devops-bootcamp-project) |
+| Overview page | https://demo.arifbhrn.com/ |
 
 ## Stack
 
