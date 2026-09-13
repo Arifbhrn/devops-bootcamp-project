@@ -11,7 +11,7 @@ inbound port ever opened.
 |---|---|
 | Application | [https://web.infratify.com](https://web.arifbhrn.com/) |
 | Monitoring (Grafana) | [https://monitoring.arifbhrn.com](https://monitoring.arifbhrn.com/d/ad2vbvb/armada-node-overview?from=now-15m&to=now&timezone=browser&refresh=30s) |
-| Status page | [https://arifbhrn.github.io/devops-bootcamp-project/](https://github.com/Arifbhrn/devops-bootcamp-project) |
+| Source page | [https://arifbhrn.github.io/devops-bootcamp-project/](https://github.com/Arifbhrn/devops-bootcamp-project) |
 
 ## Stack
 
@@ -59,3 +59,18 @@ Nothing sensitive is committed to this repo. The Cloudflare tunnel token is
 stored in AWS SSM Parameter Store (`SecureString`) and fetched live by the
 playbook at run time. SSH keys and deploy keys are injected into the
 controller via Terraform's `templatefile()`, not stored in version control.
+
+## Screenshots
+
+`Infratify Ship`
+
+<img width="1042" height="560" alt="image" src="https://github.com/user-attachments/assets/e1395d5b-1ad8-445a-8e55-f772c2f9d005" />
+
+---
+
+`Grafana Dashboard`
+
+<img width="875" height="883" alt="image" src="https://github.com/user-attachments/assets/cbf2f021-6225-4681-b690-1df88c4134fc" />
+
+
+
