@@ -46,7 +46,7 @@ Cloudflare Tunnel · AWS SSM Parameter Store
     playbook-stack.yaml
     playbook-app.yaml
    ```
-   or alternatively, run all three automatically with a single command
+   or alternatively, run all four automatically with a single command
    ```
     ansible-playbook site.yml
    ```
