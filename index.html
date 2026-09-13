@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>devops-bootcamp-project — deployment console</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --panel-raised: #1c2129;
+    --border: #30363d;
+    --border-bright: #3f4854;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --go: #3fb950;
+    --amber: #d29922;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--go);
+    outline-offset: 3px;
+  }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 72px 24px 96px;
+  }
+
+  /* ---------- hero ---------- */
+
+  .hero {
+    animation: rise 0.6s ease-out;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero { animation: none; }
+  }
+
+  .status-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--go);
+    margin-bottom: 20px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--go);
+    box-shadow: 0 0 8px var(--go);
+    flex-shrink: 0;
+  }
+
+  h1 {
+    font-size: 40px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+    font-weight: 650;
+  }
+
+  .lede {
+    font-size: 17px;
+    color: var(--text-dim);
+    max-width: 60ch;
+    margin: 0 0 40px;
+  }
+
+  code, .inline-mono {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--panel-raised);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* ---------- pipeline ---------- */
+
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    margin: 0 0 56px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .stage {
+    padding: 18px 14px;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+
+  .stage:last-child { border-right: none; }
+
+  .stage-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .stage-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .stage-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .pipeline { grid-template-columns: 1fr 1fr; }
+    .stage { border-bottom: 1px solid var(--border); }
+    .stage:nth-child(2n) { border-right: none; }
+  }
+
+  /* ---------- launch pads (the three required links) ---------- */
+
+  .section-heading {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin: 0 0 16px;
+    font-weight: 500;
+  }
+
+  .pads {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+
+  .pad {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 22px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .pad:hover {
+    border-color: var(--border-bright);
+    background: var(--panel-raised);
+  }
+
+  .pad-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .pad-url {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  .pad-go {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--go);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ---------- architecture grid ---------- */
+
+  .nodes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+
+  .node {
+    padding: 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .node-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .node-ip {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--amber);
+    margin-bottom: 10px;
+  }
+
+  .node-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 640px) {
+    .nodes { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- stack list ---------- */
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 56px;
+  }
+
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+  }
+
+  /* ---------- footer ---------- */
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  footer a { text-decoration: underline; text-decoration-color: var(--border-bright); }
+  footer a:hover { text-decoration-color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="status-line">
+      <span class="status-dot" aria-hidden="true"></span>
+      all systems provisioned
+    </div>
+
+    <h1>devops-bootcamp-project</h1>
+    <p class="lede">
+      A three-node AWS environment provisioned end to end with Terraform and configured
+      with Ansible: an app server running a containerized build, a private controller
+      that drives every playbook, and a monitoring stack reachable with no inbound
+      port ever opened.
+    </p>
+  </div>
+
+  <p class="section-heading">Deployment pipeline</p>
+  <div class="pipeline">
+    <div class="stage">
+      <span class="stage-num">01</span>
+      <div class="stage-name">Terraform</div>
+      <div class="stage-sub">VPC, subnets, IAM</div>
+    </div>
+    <div class="stage">
+      <span class="stage-num">02</span>
+      <div class="stage-name">Controller</div>
+      <div class="stage-sub">boots, clones, runs</div>
+    </div>
+    <div class="stage">
+      <span class="stage-num">03</span>
+      <div class="stage-name">Ansible</div>
+      <div class="stage-sub">Docker + configs</div>
+    </div>
+    <div class="stage">
+      <span class="stage-num">04</span>
+      <div class="stage-name">ECR</div>
+      <div class="stage-sub">image build + push</div>
+    </div>
+    <div class="stage">
+      <span class="stage-num">05</span>
+      <div class="stage-name">Runtime</div>
+      <div class="stage-sub">containers live</div>
+    </div>
+  </div>
+
+  <p class="section-heading">Live endpoints</p>
+  <div class="pads">
+    <!-- Replace each href below with the real URL before publishing -->
+    <a class="pad" href="https://web.arifbhrn.com/" target="_blank" rel="noopener">
+      <div>
+        <div class="pad-label">Application</div>
+        <div class="pad-url">web.infratify.com</div>
+      </div>
+      <span class="pad-go">open →</span>
+    </a>
+    <a class="pad" href="https://monitoring.arifbhrn.com" target="_blank" rel="noopener">
+      <div>
+        <div class="pad-label">Monitoring — Grafana</div>
+        <div class="pad-url">monitoring.arifbhrn.com</div>
+      </div>
+      <span class="pad-go">open →</span>
+    </a>
+    <a class="pad" href="https://github.com/Arifbhrn/devops-bootcamp-project" target="_blank" rel="noopener">
+      <div>
+        <div class="pad-label">Source</div>
+        <div class="pad-url">github.com/Arifbhrn/devops-bootcamp-project</div>
+      </div>
+      <span class="pad-go">open →</span>
+    </a>
+  </div>
+
+  <p class="section-heading">Nodes</p>
+  <div class="nodes">
+    <div class="node">
+      <div class="node-name">Web</div>
+      <div class="node-ip">10.0.0.5</div>
+      <div class="node-desc">Public subnet. Runs the app container and node_exporter behind an Elastic IP.</div>
+    </div>
+    <div class="node">
+      <div class="node-name">Controller</div>
+      <div class="node-ip">10.0.0.135</div>
+      <div class="node-desc">Private subnet. Every playbook in this repo runs from here, never from a laptop.</div>
+    </div>
+    <div class="node">
+      <div class="node-name">Monitor</div>
+      <div class="node-ip">10.0.0.136</div>
+      <div class="node-desc">Private subnet, no inbound rule. Reached only through a Cloudflare Tunnel.</div>
+    </div>
+  </div>
+
+  <p class="section-heading">Stack</p>
+  <div class="stack">
+    <span class="chip">Terraform</span>
+    <span class="chip">Ansible</span>
+    <span class="chip">Docker Compose</span>
+    <span class="chip">Amazon ECR</span>
+    <span class="chip">Prometheus</span>
+    <span class="chip">Grafana</span>
+    <span class="chip">Cloudflare Tunnel</span>
+    <span class="chip">AWS SSM</span>
+  </div>
+
+  <footer>
+    Built for a DevOps bootcamp final project. Infrastructure and config in this
+    repository are provisioned with a single <code>terraform apply</code>;
+    see <a href="https://github.com/Arifbhrn/devops-bootcamp-project">the repo</a>
+    for the Terraform and Ansible source.
+  </footer>
+
+</div>
+
+</body>
+</html>
