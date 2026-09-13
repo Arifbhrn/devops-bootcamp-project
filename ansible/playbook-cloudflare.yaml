@@ -6,6 +6,12 @@
     tunnel_parameter: "/devops-bootcamp-project/tunnel-token"
 
   tasks:
+    - name: Install unzip
+      apt:
+        name: unzip
+        state: present
+        update_cache: true
+
     - name: Install AWS CLI v2
       block:
         - name: Download AWS CLI installer
