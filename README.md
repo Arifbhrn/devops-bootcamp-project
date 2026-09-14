@@ -48,7 +48,7 @@ Cloudflare Tunnel · AWS SSM Parameter Store
    ```
    or alternatively, run all four automatically with a single command
    ```
-    ansible-playbook site.yml
+    ansible-playbook site.yaml
    ```
 4. From here on: edit, push, re-run the playbook. Nothing changes unless the
    underlying files actually changed, so running it again with no edits is
