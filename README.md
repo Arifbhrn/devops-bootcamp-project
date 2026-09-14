@@ -23,7 +23,7 @@ Cloudflare Tunnel · AWS SSM Parameter Store
 
 ```
 .
-├── app/            application source + Dockerfile
+├── app/            Dockerfile
 ├── terraform/      VPC, subnets, security groups, IAM, the three EC2 modules
 ├── ansible/        playbooks, inventory template, docker-compose files
 └── index.html      status page served via GitHub Pages
